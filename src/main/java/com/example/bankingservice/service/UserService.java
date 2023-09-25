@@ -2,11 +2,14 @@ package com.example.bankingservice.service;
 
 import com.example.bankingservice.domain.Role;
 import com.example.bankingservice.domain.User;
+import com.example.bankingservice.dto.UserDto;
+import com.example.bankingservice.exception.UserIsExist;
 import com.example.bankingservice.repo.UserRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -19,18 +22,23 @@ import java.util.Optional;
 public class UserService {
     private final UserRepo userRepo;
 
+    private final PasswordEncoder encoder;
 
-    public boolean createUser(User user) {
-        if (user!=null){
-            user.setName(user.getName());
-            user.setAktive(true);
-            user.setEmail(user.getEmail());
-            user.setLastname(user.getLastname());
-            user.setPassword(user.getPassword());
-            user.setRoles(Collections.singleton(Role.USER));
-            userRepo.save(user);
+
+    public User createUser(UserDto userDto) {
+        Optional <User> inDB = userRepo.findByEmail(userDto.getEmail());
+        if (inDB.isPresent()) {
+            throw new UserIsExist("пользователь с таким емайл уже есть");
         }
-        return true;
+        User user = new User();
+        user.setAktive(true);
+        user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
+        user.setLastname(userDto.getLastname());
+        user.setPassword(encoder.encode(userDto.getPassword()));
+        user.setRoles(Collections.singleton(Role.USER));
+        return  userRepo.save(user);
+
     }
     public void deleteUser(User user) {
         userRepo.delete(user);

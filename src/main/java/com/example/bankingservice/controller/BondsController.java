@@ -29,8 +29,7 @@ public class BondsController {
 
     private XMLCBRParser parser;
     private MoexParser moexParser;
-    private JsonParser JsonParser;
-    private MoexApi api;
+
 
 
 

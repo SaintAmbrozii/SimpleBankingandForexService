@@ -1,8 +1,10 @@
 package com.example.bankingservice.controller;
 
 import com.example.bankingservice.domain.User;
+import com.example.bankingservice.dto.UserDto;
 import com.example.bankingservice.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +18,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("profile")
-    public User getProfile() {
-        return userService.getCurrentUser();
+    public User getProfile(@AuthenticationPrincipal User user) {
+        return userService.getByEmail(user.getEmail()).orElseThrow();
     }
     @PostMapping()
-    public void createUser(@RequestBody User user) {
-        userService.createUser(user);
+    public void createUser(@RequestBody UserDto userDto) {
+        userService.createUser(userDto);
     }
     @GetMapping()
     public List<User> gatAllUsers() {

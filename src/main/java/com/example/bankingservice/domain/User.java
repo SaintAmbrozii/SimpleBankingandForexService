@@ -1,18 +1,21 @@
 package com.example.bankingservice.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
+
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
-public class User {
+@ToString
+public class User implements UserDetails {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +30,9 @@ public class User {
     private String email;
     private boolean isAktive;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JsonBackReference
     private List<Account> accounts;
-    @ElementCollection(targetClass = Role.class,fetch = FetchType.LAZY)
+
+    @ElementCollection(targetClass = Role.class,fetch = FetchType.EAGER)
     @Enumerated(value = EnumType.STRING)
     @CollectionTable(name = "user_role",joinColumns = @JoinColumn(name = "user_id"))
     private Set<Role> roles = new HashSet<>();
@@ -45,5 +48,35 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

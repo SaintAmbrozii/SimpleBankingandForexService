@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-public class JWTRequest {
+public class LoginRequest {
     private String email;
     private String password;
 

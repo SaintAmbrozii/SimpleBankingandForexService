@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "user_accounts")
-public class Account implements Serializable {
+public class Account {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

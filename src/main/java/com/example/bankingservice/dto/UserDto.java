@@ -10,7 +10,10 @@ import java.util.List;
 public class UserDto {
     private Long id;
     private String name;
+    private String email;
     private String lastname;
-    private BigDecimal balance;
-    private List<Account> accounts;
+    private String password;
+    private Boolean isAktive;
+
+
 }
